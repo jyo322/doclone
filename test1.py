@@ -4,15 +4,19 @@ import requests
 import shutil
 import sys
 import default_module as dm
+def myrequest_get(ip):
+	url ='http://' + ip + '/video/capture?quality=100&mode=0&rand=1234567'
+	headers = {'Authorization': 'Basic YWRtaW46cDAxMjM0', 'Connection': 'Keep-Alive', 'Cache-Control': 'no-cache' }
+	response = requests.get(url,headers=headers, stream=True, timeout=3)
+	return response
+
 
 
 async def capture_async(ip):
 	loop = asyncio.get_event_loop()
-	url ='http://' + ip + '/video/capture?quality=100&mode=0&rand=1234567'
-	headers = {'Authorization': 'Basic YWRtaW46cDAxMjM0', 'Connection': 'Keep-Alive', 'Cache-Control': 'no-cache' }
 	print("capture " + ip)
 	try:
-		req = loop.run_in_executor(None, requests.get, url)
+		req = loop.run_in_executor(None, myrequest_get, ip)
 		response = await req
 		print(response)
 		if response.status_code == 200:
@@ -20,7 +24,6 @@ async def capture_async(ip):
 		else:
 			print("error")
 	except Exception as e:
-		print(e)
 		print("disconnect")
 
 
